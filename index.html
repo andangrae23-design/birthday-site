@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>To Jayson</title>
+
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+/* Center everything */
+#stage {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #000;
+}
+
+/* Locked 16:9 container */
+.frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: min(100vw, calc(100vh * (16 / 9)));
+}
+
+/* Slide image */
+#slideImg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* All controls are positioned relative to the frame */
+.controlLayer img {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ---------- BUTTON SIZES ---------- */
+#musicToggle { width: 70px; }
+#prevBtn, #nextBtn { width: 90px; }
+
+/* =====================================================
+   CUSTOM PLACEMENT SECTION
+   Edit left/top percentages to match Photoshop layout
+   ===================================================== */
+
+/* ===== FIRST SLIDE (only NEXT visible) ===== */
+.layout-first #nextBtn {
+  left: 41%;     /* <-- customise */
+  top: 75%;
+}
+
+/* ===== MIDDLE SLIDES (Back + Next) ===== */
+.layout-middle #prevBtn {
+  left: 40%;     /* <-- customise */
+  top: 90%;
+}
+
+.layout-middle #nextBtn {
+  left: 46%;     /* <-- customise */
+  top: 90%;
+}
+
+/* ===== LAST SLIDE (only BACK visible) ===== */
+.layout-last #prevBtn {
+  left: 65%;     /* <-- customise */
+  top: 80%;
+}
+
+/* ===== MUSIC ICON (same for all slides) ===== */
+#musicToggle {
+  left: 80%;     /* <-- customise */
+  top: 90%;
+}
+
+/* Hide helper */
+.hidden { display: none !important; }
+
+</style>
+</head>
+
+<body>
+
+<div id="stage">
+  <div class="frame" id="frame">
+
+    <img id="slideImg" src="images/01-title.jpg" alt="">
+
+    <div class="controlLayer">
+      <img id="musicToggle" src="ui/play.png" alt="Play/Pause">
+      <img id="prevBtn" src="ui/arrow-left.png" alt="Back">
+      <img id="nextBtn" src="ui/arrow-right.png" alt="Next">
+    </div>
+
+  </div>
+</div>
+
+<audio id="bgm" src="music/hbd.mp3" loop></audio>
+
+<script>
+
+const images = [
+  "images/01-title.jpg",
+  "images/02.jpg",
+  "images/03.jpg",
+  "images/04.jpg",
+  "images/05.jpg",
+  "images/06.jpg",
+  "images/07.jpg",
+  "images/08.jpg",
+  "images/09.jpg",
+  "images/10.jpg",
+  "images/11.jpg",
+  "images/12.jpg",
+  "images/13.jpg",
+  "images/14.jpg",
+  "images/15.jpg",
+  "images/16-last.jpg",
+];
+
+const slideImg = document.getElementById("slideImg");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const musicToggle = document.getElementById("musicToggle");
+const bgm = document.getElementById("bgm");
+const frame = document.getElementById("frame");
+const stage = document.getElementById("stage");
+
+let index = 0;
+let playing = false;
+
+/* Update button visibility */
+function updateButtons() {
+
+  prevBtn.classList.remove("hidden");
+  nextBtn.classList.remove("hidden");
+
+  if (index === 0) {
+    prevBtn.classList.add("hidden");
+  }
+  else if (index === images.length - 1) {
+    nextBtn.classList.add("hidden");
+  }
+}
+
+/* Show slide */
+function showSlide(i) {
+  index = i;
+  slideImg.src = images[index];
+
+  frame.classList.remove("layout-first", "layout-middle", "layout-last");
+
+  if (index === 0) frame.classList.add("layout-first");
+  else if (index === images.length - 1) frame.classList.add("layout-last");
+  else frame.classList.add("layout-middle");
+
+  updateButtons();
+}
+
+/* Button clicks */
+nextBtn.addEventListener("click", () => {
+  if (index < images.length - 1) showSlide(index + 1);
+});
+
+prevBtn.addEventListener("click", () => {
+  if (index > 0) showSlide(index - 1);
+});
+
+/* Swipe support */
+let startX = 0;
+let endX = 0;
+
+stage.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+}, { passive: true });
+
+stage.addEventListener("touchend", e => {
+  endX = e.changedTouches[0].clientX;
+  handleSwipe();
+});
+
+stage.addEventListener("mousedown", e => {
+  startX = e.clientX;
+});
+
+stage.addEventListener("mouseup", e => {
+  endX = e.clientX;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  const threshold = window.innerWidth * 0.12;
+  const dx = endX - startX;
+
+  if (dx < -threshold && index < images.length - 1) showSlide(index + 1);
+  if (dx > threshold && index > 0) showSlide(index - 1);
+}
+
+/* Music toggle */
+musicToggle.addEventListener("click", async () => {
+  try {
+    if (!playing) {
+      await bgm.play();
+      musicToggle.src = "ui/pause.png";
+      playing = true;
+    } else {
+      bgm.pause();
+      musicToggle.src = "ui/play.png";
+      playing = false;
+    }
+  } catch {
+    alert("Tap anywhere once, then press play again.");
+  }
+});
+
+/* Init */
+showSlide(0);
+
+/* To Jayson */
+/*Happy birthday babe, I hope this is a reminder to you
+na you're surrounded by people that support and love you.
+I pray na di ka mapagod sa pag pursue ng dreams mo.
+Sa lahat ng paraan I will help you. 
+Thank you sa pag inspire saamin, sa pag gawa ng mabuti,
+kailangan ng earth ng katulad mo kaya sana magparami tayo sa future. Haha.
+
+Sabi nga ni Flow G - 'Kaw na bahala sa kin tas ako bahala sa tin'
+I gotchu!!
+
+I love you!
+
+(lol tama ba yung pag lagay ko ng comment)*/
+
+</script>
+
+</body>
+</html>
+
