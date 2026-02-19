@@ -13,7 +13,6 @@ html, body {
   background: #000;
 }
 
-/* Center everything */
 #stage {
   position: fixed;
   inset: 0;
@@ -22,21 +21,18 @@ html, body {
   background: #000;
 }
 
-/* Locked 16:9 container */
 .frame {
   position: relative;
   aspect-ratio: 16 / 9;
   width: min(100vw, calc(100vh * (16 / 9)));
 }
 
-/* Slide image */
 #slideImg {
   width: 100%;
   height: 100%;
   display: block;
 }
 
-/* All controls are positioned relative to the frame */
 .controlLayer img {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -45,22 +41,14 @@ html, body {
   -webkit-user-drag: none;
 }
 
-/* ---------- BUTTON SIZES ---------- */
 #musicToggle { width: 70px; }
 #prevBtn, #nextBtn { width: 90px; }
 
-/* =====================================================
-   CUSTOM PLACEMENT SECTION
-   Edit left/top percentages to match Photoshop layout
-   ===================================================== */
-
-/* ===== FIRST SLIDE (only NEXT visible) ===== */
 .layout-first #nextBtn {
   left: 41%;     /* <-- customise */
   top: 75%;
 }
 
-/* ===== MIDDLE SLIDES (Back + Next) ===== */
 .layout-middle #prevBtn {
   left: 40%;     /* <-- customise */
   top: 90%;
@@ -71,19 +59,16 @@ html, body {
   top: 90%;
 }
 
-/* ===== LAST SLIDE (only BACK visible) ===== */
 .layout-last #prevBtn {
   left: 65%;     /* <-- customise */
   top: 80%;
 }
 
-/* ===== MUSIC ICON (same for all slides) ===== */
 #musicToggle {
   left: 80%;     /* <-- customise */
   top: 90%;
 }
 
-/* Hide helper */
 .hidden { display: none !important; }
 
 </style>
@@ -151,7 +136,6 @@ const stage = document.getElementById("stage");
 let index = 0;
 let playing = false;
 
-/* Update button visibility */
 function updateButtons() {
 
   prevBtn.classList.remove("hidden");
@@ -165,7 +149,6 @@ function updateButtons() {
   }
 }
 
-/* Show slide */
 function showSlide(i) {
   index = i;
 
@@ -192,8 +175,6 @@ function showSlide(i) {
   img.src = nextSrc;
 }
 
-
-/* Button clicks */
 nextBtn.addEventListener("click", () => {
   if (index < images.length - 1) showSlide(index + 1);
 });
@@ -202,7 +183,6 @@ prevBtn.addEventListener("click", () => {
   if (index > 0) showSlide(index - 1);
 });
 
-/* Swipe support */
 let startX = 0;
 let endX = 0;
 
@@ -232,7 +212,6 @@ function handleSwipe() {
   if (dx > threshold && index > 0) showSlide(index - 1);
 }
 
-/* Music toggle */
 musicToggle.addEventListener("click", async () => {
   try {
     if (!playing) {
@@ -249,7 +228,6 @@ musicToggle.addEventListener("click", async () => {
   }
 });
 
-/* Init */
 showSlide(0);
 
 /* To Jayson */
@@ -271,4 +249,3 @@ I love you!
 
 </body>
 </html>
-
